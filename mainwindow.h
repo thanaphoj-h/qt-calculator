@@ -74,8 +74,9 @@ private:
 
     /* State Check Variable */
     bool initial_s = false;
-    bool operator_s = false;
+    bool fnum_s = false;
     bool snum_s = false;
+    bool operator_s = false;
     bool result_s = false;
 
     /* Append text to number */

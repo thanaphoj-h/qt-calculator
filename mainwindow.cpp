@@ -102,8 +102,7 @@ void MainWindow::number_append(QString input_number){
 }
 
 void MainWindow::check_number_state(double input_number){
-    if(result_s == true){
-        /* Process After get 1st result */
+    if(initial_s == false && fnum_s == false && snum_s == false && operator_s == false && result_s == true){
         result_s = false; // set result state back to true
         if(operator_s == true){
             /* If got result and pressed the operation*/
@@ -120,12 +119,16 @@ void MainWindow::check_number_state(double input_number){
     }
     else{
         /* Process before get 1st result */
-        if(snum_s == true){
+        if(initial_s == false && fnum_s == false && snum_s == false && operator_s == true && result_s == false){
+            operator_s = false;
+            snum_s = true;
             /* Operation is insert and waiting for second number */
             second_number = input_number; // set second number from input number (from number_append function)
             check_state_flag();
         }
-        else if(snum_s == false){
+        else if(initial_s == true && fnum_s == false && snum_s == false && operator_s == false && result_s == false){
+            initial_s = false;
+            fnum_s = true;
             first_number = input_number; // set first number from input number (from number_append function)
             check_state_flag();
         }
@@ -136,52 +139,40 @@ void MainWindow::check_number_state(double input_number){
 }
 
 void MainWindow::check_operator(QString op_input){
-    if(initial_s == false){
+    if(initial_s == false && fnum_s == true && snum_s == false && operator_s == false && result_s == false){
         QString display_sign;
+        fnum_s = false;
         /* Add Operation */
         if(op_input == "+"){
             operators = op_input;
             display_sign = op_input;
             operator_s = true;
-            snum_s = true;
         }
         /* Subtract operation */
         else if (op_input == "-"){
             operators = op_input;
             display_sign = op_input;
             operator_s = true;
-            snum_s = true;
         }
         /* Multiply operation */
         else if (op_input == "x"){
             operators = "*";
             display_sign = "x";
             operator_s = true;
-            snum_s = true;
         }
         /* Divide operation */
         else if (op_input == "÷"){
             operators = "/";
             display_sign = "÷";
             operator_s = true;
-            snum_s = true;
-        }
-        /* Equal operation */
-        else if (op_input == "="){
-            operator_s = true;
-            snum_s = true;
-            Calculate();
-        }
-        /* Clear operation */
-        else if (op_input == "C"){
-            operator_s = false;
-            snum_s = false;
-            Initial();
         }
         /* Plus/Minus Operation */
         else if(op_input == "+/-"){
-            operator_s = false;
             plus_minus();
+        }
+        /* Clear Operation */
+        else if(op_input == "C"){
+            Initial();
         }
         else{
 
@@ -189,6 +180,19 @@ void MainWindow::check_operator(QString op_input){
         str_input_number = "";
         set_operator_display(display_sign);
         check_state_flag();
+    }
+    else if(initial_s == false && fnum_s == false && snum_s == true && operator_s == false && result_s == false){
+        /* Equal operation */
+        if(op_input == "="){
+            Calculate();
+        }
+        /* Clear Operation */
+        else if(op_input == "C"){
+            Initial();
+        }
+    }
+    else if(op_input == "C"){
+        Initial();
     }
     else{
         set_main_display("Initial State");
@@ -199,6 +203,7 @@ void MainWindow::check_operator(QString op_input){
 void MainWindow::Initial(){
     /* Set Flag to Initial*/
     initial_s = true;
+    fnum_s = false;
     snum_s = false;
     operator_s = false;
     result_s = false;
@@ -273,27 +278,23 @@ QString MainWindow::check_result_precision(double input_number){
 }
 
 void MainWindow::Calculate(){
-    if(operator_s == true && snum_s == true){ // Check Nhave operator
-        operator_s = false; // Clear Operator Flag
+    if(initial_s == false && fnum_s == false && snum_s == true && operator_s == false && result_s == false){ // Check Nhave operator
+        snum_s = false;
         str_input_number = ""; // Clear str_input_number
         if(operators == "+"){
             answer = first_number + second_number;
             str_answer = check_result_precision(answer);
             result_s = true;
-            snum_s = false;
         }
         else if(operators == "-"){
             answer = first_number - second_number;
             str_answer = check_result_precision(answer);
             result_s = true;
-            snum_s = false;
-
         }
         else if(operators == "*"){
             answer = first_number * second_number;
             str_answer = check_result_precision(answer);
             result_s = true;
-            snum_s = false;
 
         }
         else if(operators == "/"){
@@ -307,8 +308,6 @@ void MainWindow::Calculate(){
                 answer = first_number / second_number;
                 str_answer = check_result_precision(answer);
                 result_s = true;
-                snum_s = false;
-
             }
         }
         else{
@@ -346,22 +345,22 @@ bool MainWindow::get_result_s(){ return result_s; }
 QString MainWindow::check_state_flag(){
     QString output = "";
 
-    qDebug() << "[INI | SNUM | OP | RES] -> " << initial_s << snum_s << operator_s << result_s;
+    qDebug("INI : %d | FNUM : %d | SNUM : %d | OP : %d | RES : %d ", initial_s, fnum_s, snum_s, operator_s, result_s);
 
-    if(initial_s == true && snum_s == false && operator_s == false && result_s == false){
+    if(initial_s == true && fnum_s == false && snum_s == false && operator_s == false && result_s == false){
         output = "Initial State";
     }
-    else if(initial_s == false && snum_s == false && operator_s == false && result_s == false){
+    else if(initial_s == false && fnum_s == true && snum_s == false && operator_s == false && result_s == false){
         output = "First Number State";
     }
-    else if(initial_s == false && snum_s == true && operator_s == true && result_s == false){
-        output = "Operator State & Second Number State";
+    else if(initial_s == false && fnum_s == false && snum_s == false && operator_s == true && result_s == false){
+        output = "Operator State";
     }
-    else if(initial_s == false && snum_s == false && operator_s == false && result_s == true){
-        output = "Result State";
+    else if(initial_s == false && fnum_s == false && snum_s == true && operator_s == false && result_s == false){
+        output = "Second Number State";
     }
-    else if(initial_s == false && snum_s == true && operator_s == true && result_s == true){
-        output = "Recieve operation from Result State";
+    else if(initial_s == false && fnum_s == false && snum_s == false && operator_s == false && result_s == true){
+        output = "Calculate State";
     }
     qDebug() << output;
     return output;
