@@ -308,7 +308,6 @@ void MainWindow::Calculate(){
                 str_answer = check_result_precision(answer);
                 result_s = true;
                 snum_s = false;
-
             }
         }
         else{
