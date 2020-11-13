@@ -8,7 +8,6 @@
 #include <QAbstractButton>
 #include <QLocale>
 
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -74,10 +73,10 @@ void MainWindow::number_append(QString input_number){
     /* Get stiring and Merge String */
     if(str_input_number.size() >= digit){
         /* Number is over 10 digits */
-        str_input_number = str_prv_number; // set number to equal previous number (number at 10 digits)
+        str_input_number = str_prv_number; // set number to equal previous number (number at 8 digits)
     }
     else{
-        /* Number less than 10 digits */
+        /* Number less than 8 digits */
         if(input_number == "."){
             /* Input found "." Decmial */
             if(str_input_number.contains(".")){
@@ -102,35 +101,34 @@ void MainWindow::number_append(QString input_number){
 }
 
 void MainWindow::check_number_state(double input_number){
-    if(initial_s == false && fnum_s == false && snum_s == false && operator_s == false && result_s == true){
+    if(result_s == true){
+        qDebug() << "Get Result";
+        /* Process After get 1st result */
         result_s = false; // set result state back to true
         if(operator_s == true){
             /* If got result and pressed the operation*/
             first_number = answer; // Set first number as result number
             snum_s = true; // set second number state to true
-            check_state_flag();
+            show_state();
         }
         else{
             /* If got result and not pressed the operation */
             snum_s = false;  // Set second number input to true
             first_number = input_number; // set first number from input number (from number_append function)
-            check_state_flag();
+            show_state();
         }
     }
     else{
         /* Process before get 1st result */
-        if(initial_s == false && fnum_s == false && snum_s == false && operator_s == true && result_s == false){
-            operator_s = false;
+        if(operator_s == true && result_s == false){
             snum_s = true;
             /* Operation is insert and waiting for second number */
             second_number = input_number; // set second number from input number (from number_append function)
-            check_state_flag();
+            show_state();
         }
-        else if(initial_s == true && fnum_s == false && snum_s == false && operator_s == false && result_s == false){
-            initial_s = false;
-            fnum_s = true;
+        else if(snum_s == false){
             first_number = input_number; // set first number from input number (from number_append function)
-            check_state_flag();
+            show_state();
         }
         else{
             // Impossible to get to this condition
@@ -139,60 +137,55 @@ void MainWindow::check_number_state(double input_number){
 }
 
 void MainWindow::check_operator(QString op_input){
-    if(initial_s == false && fnum_s == true && snum_s == false && operator_s == false && result_s == false){
+    if(initial_s == false){
         QString display_sign;
-        fnum_s = false;
         /* Add Operation */
         if(op_input == "+"){
             operators = op_input;
             display_sign = op_input;
             operator_s = true;
+            show_state();
         }
         /* Subtract operation */
         else if (op_input == "-"){
             operators = op_input;
             display_sign = op_input;
             operator_s = true;
+            show_state();
         }
         /* Multiply operation */
         else if (op_input == "x"){
             operators = "*";
             display_sign = "x";
             operator_s = true;
+            show_state();
         }
         /* Divide operation */
         else if (op_input == "÷"){
             operators = "/";
             display_sign = "÷";
             operator_s = true;
+            show_state();
+        }
+        /* Equal operation */
+        else if (op_input == "="){
+            snum_s = true;
+            Calculate();
+        }
+        /* Clear operation */
+        else if (op_input == "C"){
+            snum_s = false;
+            Initial();
         }
         /* Plus/Minus Operation */
         else if(op_input == "+/-"){
             plus_minus();
-        }
-        /* Clear Operation */
-        else if(op_input == "C"){
-            Initial();
         }
         else{
 
         }
         str_input_number = "";
         set_operator_display(display_sign);
-        check_state_flag();
-    }
-    else if(initial_s == false && fnum_s == false && snum_s == true && operator_s == false && result_s == false){
-        /* Equal operation */
-        if(op_input == "="){
-            Calculate();
-        }
-        /* Clear Operation */
-        else if(op_input == "C"){
-            Initial();
-        }
-    }
-    else if(op_input == "C"){
-        Initial();
     }
     else{
         set_main_display("Initial State");
@@ -203,7 +196,6 @@ void MainWindow::check_operator(QString op_input){
 void MainWindow::Initial(){
     /* Set Flag to Initial*/
     initial_s = true;
-    fnum_s = false;
     snum_s = false;
     operator_s = false;
     result_s = false;
@@ -221,8 +213,7 @@ void MainWindow::Initial(){
 
     /* Clear Operation*/
     operators = ""; // Clear operation variable;
-
-    check_state_flag();
+    show_state();
 
 }
 
@@ -254,7 +245,7 @@ QString MainWindow::check_result_precision(double input_number){
     double fraction_size = QString::number(fraction_part).size() - 2;
     //    qDebug() << "Fraction :" << fraction_part << "| Fraction size :" << fraction_size - 2;
 
-    if(input_number > 999999999){
+    if(input_number > 9999999){
         /*Input have more than 10 digit*/
         return "Display Error";
     }
@@ -265,7 +256,7 @@ QString MainWindow::check_result_precision(double input_number){
         }
         else{
             /* Have Fraction */
-            if(fraction_size > 5){
+            if(fraction_size > precision){
                 /* Fraction more than 5 digit */
                 return QString::number(input_number, 'f', 5);
             }
@@ -278,9 +269,11 @@ QString MainWindow::check_result_precision(double input_number){
 }
 
 void MainWindow::Calculate(){
-    if(initial_s == false && fnum_s == false && snum_s == true && operator_s == false && result_s == false){ // Check Nhave operator
+    if(operator_s == true && snum_s == true){ // Check Nhave operator
+        operator_s = false;
         snum_s = false;
         str_input_number = ""; // Clear str_input_number
+
         if(operators == "+"){
             answer = first_number + second_number;
             str_answer = check_result_precision(answer);
@@ -295,13 +288,11 @@ void MainWindow::Calculate(){
             answer = first_number * second_number;
             str_answer = check_result_precision(answer);
             result_s = true;
-
         }
         else if(operators == "/"){
             if(second_number == 0){
                 /* Check Second Number equal to 0 (Number divide by 0 is INF.) */
                 str_answer = "Math Error";
-                Initial();
             }
             else{
                 /* Second number is equal to 0 */
@@ -314,54 +305,287 @@ void MainWindow::Calculate(){
             result_s = false;
         }
         set_main_display(str_answer);
-        check_state_flag();
+        show_state();
     }
     else{
         set_main_display("Inset OP");
     }
 }
 
+
 /* Testing Section */
-/* Set Variable Function */
-void MainWindow::set_first_number(double input_number){ first_number = input_number; }
-void MainWindow::set_second_number(double input_number){ second_number = input_number; }
-void MainWindow::set_operators(QString input_string){ operators = input_string; }
-void MainWindow::set_initial_s(bool input){ initial_s = input; }
-void MainWindow::set_second_number_s(bool input){ snum_s = input; }
-void MainWindow::set_operation_s(bool input){ operators = input; }
-void MainWindow::set_result_s(bool input){ result_s = input; }
+void MainWindow::show_state(){
 
-/* GET Variable Function*/
-double MainWindow::get_answer(){ return answer; }
-double MainWindow::get_first_number(){ return first_number; }
-double MainWindow::get_second_number(){ return second_number; }
-QString MainWindow::get_operators(){ return operators; }
-bool MainWindow::get_initial_s(){ return initial_s; }
-bool MainWindow::get_second_number_s(){ return snum_s; }
-bool MainWindow::get_operation_s(){ return operator_s; }
-bool MainWindow::get_result_s(){ return result_s; }
-
-/* Testing Function */
-QString MainWindow::check_state_flag(){
-    QString output = "";
-
-    qDebug("INI : %d | FNUM : %d | SNUM : %d | OP : %d | RES : %d ", initial_s, fnum_s, snum_s, operator_s, result_s);
-
-    if(initial_s == true && fnum_s == false && snum_s == false && operator_s == false && result_s == false){
-        output = "Initial State";
+    qDebug() << "[INI / OP / SNUM / RES ] -> " << initial_s << operator_s << snum_s << result_s;
+    if(initial_s == true && operator_s == false && snum_s == false && result_s == false){
+        qDebug() << "Initial State";
     }
-    else if(initial_s == false && fnum_s == true && snum_s == false && operator_s == false && result_s == false){
-        output = "First Number State";
+    else if(initial_s == false && operator_s == false && snum_s == false && result_s == false){
+        qDebug() << "1st Number State";
     }
-    else if(initial_s == false && fnum_s == false && snum_s == false && operator_s == true && result_s == false){
-        output = "Operator State";
+    else if(initial_s == false && operator_s == true && snum_s == false && result_s == false){
+        qDebug() << "Operators State";
     }
-    else if(initial_s == false && fnum_s == false && snum_s == true && operator_s == false && result_s == false){
-        output = "Second Number State";
+    else if(initial_s == false && operator_s == true && snum_s == true && result_s == false){
+        qDebug() << "2nd Number State";
     }
-    else if(initial_s == false && fnum_s == false && snum_s == false && operator_s == false && result_s == true){
-        output = "Calculate State";
+    else if(initial_s == false && operator_s == false && snum_s == false && result_s == true){
+        qDebug() << "Calculate State";
     }
-    qDebug() << output;
-    return output;
+    else if(initial_s == false && operator_s == true && snum_s == false && result_s == true){
+        qDebug() << "Calculate Continue State";
+    }
 }
+
+QString MainWindow::test_calculate(double fnum, double snum, QString sign){
+    initial_s = false;
+    operator_s = true;
+    snum_s = true;
+
+    first_number = fnum;
+    second_number = snum;
+    operators = sign;
+    Calculate();
+    return str_answer;
+}
+
+///* <!--- Function for testing ---!>*/
+
+///* SET value Function*/
+//void MainWindow::set_first_number(double input_num){
+//    first_number = input_num;
+//}
+//void MainWindow::set_second_number(double input_num){
+//    second_number = input_num;
+//}
+//void MainWindow::set_initial_s(bool init){
+//    initial_s = init;
+//}
+//void MainWindow::set_operator_s(bool op){
+//    operator_s = op;
+//}
+//void MainWindow::set_snum_s(bool snum){
+//    snum_s = snum;
+//}
+//void MainWindow::set_result_s(bool res){
+//    result_s = res;
+//}
+//void MainWindow::set_state(bool init, bool op, bool snum, bool res){
+//    initial_s = init;
+//    operator_s = op;
+//    snum_s = snum;
+//    result_s = res;
+//}
+
+///* GET value Function */
+//bool MainWindow::get_initial_s(){
+//    return initial_s;
+//}
+//bool MainWindow::get_operator_s(){
+//    return operator_s;
+//}
+//bool MainWindow::get_snum_s(){
+//    return snum_s;
+//}
+//bool MainWindow::get_result_s(){
+//    return result_s;
+//}
+//double MainWindow::get_result_number(){
+//    return result_number;
+//}
+//QString MainWindow::get_str_input_number(){
+//    return str_input_number;
+//}
+//QString MainWindow::get_operation(){
+//    return operation;
+//}
+
+///* Test Function */
+//QString MainWindow::check_number_input(QString input_num){
+//    QString input = input_num;
+//    if(input == "0"){
+//        return "0";
+//    }
+//    else if(input == "1"){
+//        return "1";
+//    }
+//    else if(input == "2"){
+//        return "2";
+//    }
+//    else if(input == "3"){
+//        return "3";
+//    }
+//    else if(input == "4"){
+//        return "4";
+//    }
+//    else if(input == "5"){
+//        return "5";
+//    }
+//    else if(input == "6"){
+//        return "6";
+//    }
+//    else if(input == "7"){
+//        return "7";
+//    }
+//    else if(input == "8"){
+//        return "8";
+//    }
+//    else if(input == "9"){
+//        return "9";
+//    }
+//    else if(input == "."){
+//        return ".";
+//    }
+//    else{
+//        return "Invalid";
+//    }
+//}
+
+//QString MainWindow::check_operation_input(QString input_operation){
+//    QString input = input_operation;
+//    if(input == "+"){
+//        return "Plus";
+//    }
+//    else if(input == "-"){
+//        return "Minus";
+//    }
+//    else if(input == "*"){
+//        return "Multiply";
+//    }
+//    else if(input == "/"){
+//        return "Divide";
+//    }
+//    else if(input == "C"){
+//        return "Clear";
+//    }
+//    else if(input == "="){
+//        return "Equal";
+//    }
+//    else{
+//        return "Invalid";
+//    }
+//}
+
+//double MainWindow::test_input_number(QString input_number){
+//    QString input = input_number;
+
+//    //    number_append(input);
+//    int len_input = input.size() - 1;
+
+//    for(int i = 0; i <= len_input; i++){
+//        number_append(input.data()[i]);
+//    }
+//    str_input_number = "";
+//    return final_input_number;
+//}
+
+//QString MainWindow::test_input_operation(QString input_operation){
+//    QString input = input_operation;
+//    operation_append(input);
+//    return operation;
+//}
+
+//double MainWindow::test_calculate_result(double fnum, double snum, QString op){
+
+//    /* Set State for testing*/
+//    initial_s = false;
+//    operation = true;
+
+//    /* Set Variable for test */
+//    QString input = "=";
+//    first_number = fnum;
+//    second_number = snum;
+//    operation = op;
+
+//    /* Test Function*/
+//    calculate_result(input);
+
+//    return result_number;
+//}
+
+//QString MainWindow::state_checker(){
+//    if(initial_s == true && operator_s == false && snum_s == false && result_s == false){
+//        return "initial_s";
+//    }
+//    else if(initial_s == false && operator_s == false && snum_s == false && result_s == false){
+//        return "Get_First_Num_State";
+//    }
+//    else if(initial_s == false && operator_s == true && snum_s == true && result_s == false){
+//        return "Get_operator_s";
+//    }
+//    else if(initial_s == false && operator_s == true && snum_s == false && result_s == false){
+//        return "Get_snum_s";
+//    }
+//    else if(initial_s == false && operator_s == false && snum_s == true && result_s == true){
+//        return "Get_result_s";
+//    }
+//    else{
+//        return "Invalid_State";
+//    }
+//}
+
+//QString MainWindow::test_state(QString test_case){
+//    QString input = test_case;
+//    if(input == "T1"){ /* Initi -> get_number */
+//        number_append("10"); // Input Number to test
+//        return state_checker();
+//    }
+//    else if(input == "T2"){ /* Initi -> Clear */
+//        Initial("C"); // Use Clear to test
+//        return state_checker();
+//    }
+//    else if(input == "T3"){ /* Initi -> get_result */
+//        calculate_result("="); // Use Clear to test
+//        return state_checker();
+//    }
+//    else if(input == "T4"){ /*get_number -> get_operation*/
+//        number_append("10");
+//        operation_append("+");
+//        return state_checker();
+//    }
+//    else if(input == "T5"){ /*get_second_number -> get_result */
+
+//        number_append("10");
+//        operation_append("+");
+//        number_append("10");
+//        calculate_result("=");
+
+//        return state_checker();
+//    }
+
+//    /*Clear State*/
+//    else if(input == "T6"){
+//        number_append("10");
+//        Initial("C");
+//        return state_checker();
+//    }
+//    else if(input == "T7"){
+//        number_append("10");
+//        operation_append("+");
+//        Initial("C");
+//        return state_checker();
+//    }
+//    else if(input == "T8"){
+//        number_append("10");
+//        operation_append("+");
+//        number_append("10");
+//        Initial("C");
+//        return state_checker();
+//    }
+//    else if(input == "T9"){ /**/
+//        number_append("10");
+//        operation_append("+");
+//        number_append("10");
+//        calculate_result("=");
+//        Initial("C");
+//        return state_checker();
+//    }
+
+//    /* Operation State*/
+
+//    else if(input == "T10"){
+//        set_state(false, true, true, false);
+//        number_append("10");
+//        return state_checker();
+//    }
+//}

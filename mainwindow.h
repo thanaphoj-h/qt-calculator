@@ -19,46 +19,12 @@ public:
     /* State Debug */
     void show_state();
 
-    /* Set Variable Function */
-    /* Double Variable */
-    void set_first_number(double input_number = 0); // Function to set the input of First Number
-    void set_second_number(double input_number = 0); // Function to set the input of Second Number Number
-
-    /* QString Variable */
-    void set_operators(QString input_string);
-
-    /* Boolean Variable */
-    void set_initial_s(bool input = false); // Function to set the input of Initial State Flag
-    void set_second_number_s(bool input = false); // Function to set the input of Second Number State Flag
-    void set_operation_s(bool input = false); // Function to set the input of Operation State Flag
-    void set_result_s(bool input = false); // Function to set the input of Result State Flag
-
-    /* Get Variable Function*/
-    /* Double Variable */
-    double get_first_number();
-    double get_second_number();
-    double get_answer();
-
-    /* QString Variable */
-    QString get_operators();
-
-    /* Boolean Variable */
-    bool get_initial_s();
-    bool get_second_number_s();
-    bool get_operation_s();
-    bool get_result_s();
-
-    /* Check Flag Function*/
-    QString check_state_flag();
-
-    /* Tesing Function */
-    void test_gui_number_input(QString input_str);
-    void test_gui_operators_input(QString input_str);
-    void test_calculator(double input_fnum, double input_snum, QString input_operators);
-
+    /* Testing Function */
+    QString test_calculate(double fnum, double snum , QString sign);
 
 private:
-    const int digit = 10;
+    const int digit = 8;
+    const int precision = 5;
     Ui::MainWindow *ui;
 
     /* Number Variable double and string */
@@ -74,9 +40,8 @@ private:
 
     /* State Check Variable */
     bool initial_s = false;
-    bool fnum_s = false;
-    bool snum_s = false;
     bool operator_s = false;
+    bool snum_s = false;
     bool result_s = false;
 
     /* Append text to number */

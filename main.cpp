@@ -3,7 +3,7 @@
 #include <QTimer>
 #include "gtest/gtest.h"
 
-#define TEST_ENABLED 0
+#define TEST_ENABLED 1
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +22,49 @@ int main(int argc, char *argv[])
 
     return a.exec();
 }
+
+TEST(Calulator, Addition_Positive){
+    QString sign = "+";
+    MainWindow w;
+    /* POS + POS = POS*/
+    ASSERT_EQ(w.test_calculate(1,4,sign), "5");
+    ASSERT_EQ(w.test_calculate(5,10,sign), "15");
+    ASSERT_EQ(w.test_calculate(50,60,sign), "110");
+    ASSERT_EQ(w.test_calculate(400,600,sign), "1000");
+    ASSERT_EQ(w.test_calculate(8000,4000,sign), "12000");
+    ASSERT_EQ(w.test_calculate(50000, 70000,sign), "120000");
+    ASSERT_EQ(w.test_calculate(900000, 500000,sign), "1400000");
+
+    /* NEG + NEG = NEG */
+    ASSERT_EQ(w.test_calculate(-1,-4,sign), "-5");
+    ASSERT_EQ(w.test_calculate(-5,-10,sign), "-15");
+    ASSERT_EQ(w.test_calculate(-50,-60,sign), "-110");
+    ASSERT_EQ(w.test_calculate(-400,-600,sign), "-1000");
+    ASSERT_EQ(w.test_calculate(-8000,-4000,sign), "-12000");
+    ASSERT_EQ(w.test_calculate(-50000, -70000,sign), "-120000");
+
+    /* POS + NEG = POS */
+    ASSERT_EQ(w.test_calculate(5,-1,sign), "4");
+    ASSERT_EQ(w.test_calculate(60,-40,sign), "20");
+    ASSERT_EQ(w.test_calculate(500,-300,sign), "200");
+    ASSERT_EQ(w.test_calculate(1500,-400,sign), "1100");
+    ASSERT_EQ(w.test_calculate(14000,-4000,sign), "10000");
+    ASSERT_EQ(w.test_calculate(14000,-4000,sign), "10000");
+
+
+    /* POS + NEG = NEG */
+
+}
+
+TEST(Calculator, Addtition_Negative){
+    QString sign = "+";
+    MainWindow w;
+    /* POS + POS = ERROR (Over 8 digit) */
+    ASSERT_EQ(w.test_calculate(5000000, 7000000,sign), "Display Error");
+    /* NEG + NEG = ERROR (Over 8 digit) */
+    ASSERT_EQ(w.test_calculate(-900000, -500000,sign), "-1400000");
+}
+
 
 //TEST(Calculator, Number_Input_GUI_Positive){
 //    MainWindow w;
