@@ -16,11 +16,30 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    /* State Debug */
-    void show_state();
+    /* Set testing function*/
+    void set_first_number(double input = 0);
+    void set_second_number(double input = 0);
+    void set_initial_s(bool input = false);
+    void set_operators(bool input = false);
+    void set_snum_s(bool input = false);
+    void set_result_(bool input = false);
+
+    /* Get testing function */
+    double get_first_number();
+    double get_second_number();
+    double get_answer();
+    QString get_operators();
+    bool get_initial_s();
+    bool get_operator_s();
+    bool get_snum_s();
+    bool get_result_();
 
     /* Testing Function */
-    QString test_calculate(double fnum, double snum , QString sign);
+    QString test_calculate(double fnum, double snum , QString sign); // Calculate testing
+    QString check_state_flag(); // flag checking
+    QString test_state_flag(QString input); // testing function for flag
+    QString check_operation_input(QString input_operators); // testing function for testing input number
+    QString check_number_input(QString input_num); // testing function for testing input operation
 
 private:
     const int digit = 8;

@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
 TEST(Calulator, Addition_Positive){
     QString sign = "+";
     MainWindow w;
+    /* Integer */
     /* POS + POS = POS*/
     ASSERT_EQ(w.test_calculate(1,4,sign), "5");
     ASSERT_EQ(w.test_calculate(5,10,sign), "15");
@@ -43,16 +44,16 @@ TEST(Calulator, Addition_Positive){
     ASSERT_EQ(w.test_calculate(-8000,-4000,sign), "-12000");
     ASSERT_EQ(w.test_calculate(-50000, -70000,sign), "-120000");
 
-    /* POS + NEG = POS */
-    ASSERT_EQ(w.test_calculate(5,-1,sign), "4");
-    ASSERT_EQ(w.test_calculate(60,-40,sign), "20");
-    ASSERT_EQ(w.test_calculate(500,-300,sign), "200");
-    ASSERT_EQ(w.test_calculate(1500,-400,sign), "1100");
-    ASSERT_EQ(w.test_calculate(14000,-4000,sign), "10000");
-    ASSERT_EQ(w.test_calculate(14000,-4000,sign), "10000");
+    /* POS + NEG = POS/NEG */
+    ASSERT_EQ(w.test_calculate(150000,-10000,sign), "140000");
+    ASSERT_EQ(w.test_calculate(500,-4000,sign), "-3500");
 
+    /* NEG + POS = POS/NEG */
+    ASSERT_EQ(w.test_calculate(-500,600,sign), "100");
+    ASSERT_EQ(w.test_calculate(-1400,600,sign), "800");
 
-    /* POS + NEG = NEG */
+    /* Decimal*/
+
 
 }
 
@@ -66,40 +67,42 @@ TEST(Calculator, Addtition_Negative){
 }
 
 
-//TEST(Calculator, Number_Input_GUI_Positive){
-//    MainWindow w;
-//    ASSERT_EQ(w.check_number_input("0"), "0");
-//    ASSERT_EQ(w.check_number_input("1"), "1");
-//    ASSERT_EQ(w.check_number_input("2"), "2");
-//    ASSERT_EQ(w.check_number_input("3"), "3");
-//    ASSERT_EQ(w.check_number_input("4"), "4");
-//    ASSERT_EQ(w.check_number_input("5"), "5");
-//    ASSERT_EQ(w.check_number_input("6"), "6");
-//    ASSERT_EQ(w.check_number_input("7"), "7");
-//    ASSERT_EQ(w.check_number_input("8"), "8");
-//    ASSERT_EQ(w.check_number_input("9"), "9");
-//    ASSERT_EQ(w.check_number_input("."), ".");
-//}
-//TEST(Calculator, Number_Input_GUI_Negative){
-//    MainWindow w;
-//    ASSERT_EQ(w.check_number_input("*"), "Invalid");
-//    ASSERT_EQ(w.check_number_input("c"), "Invalid");
-//}
+TEST(Calculator, Number_Input_GUI_Positive){
+    MainWindow w;
+    ASSERT_EQ(w.check_number_input("0"), "0");
+    ASSERT_EQ(w.check_number_input("1"), "1");
+    ASSERT_EQ(w.check_number_input("2"), "2");
+    ASSERT_EQ(w.check_number_input("3"), "3");
+    ASSERT_EQ(w.check_number_input("4"), "4");
+    ASSERT_EQ(w.check_number_input("5"), "5");
+    ASSERT_EQ(w.check_number_input("6"), "6");
+    ASSERT_EQ(w.check_number_input("7"), "7");
+    ASSERT_EQ(w.check_number_input("8"), "8");
+    ASSERT_EQ(w.check_number_input("9"), "9");
+    ASSERT_EQ(w.check_number_input("."), ".");
+}
+TEST(Calculator, Number_Input_GUI_Negative){
+    MainWindow w;
+    ASSERT_EQ(w.check_number_input("*"), "Invalid");
+    ASSERT_EQ(w.check_number_input("c"), "Invalid");
+}
 
-//TEST(Calculator, Operator_Input_GUI_Positive){
-//    MainWindow w;
-//    ASSERT_EQ(w.check_operation_input("+"), "Plus");
-//    ASSERT_EQ(w.check_operation_input("-"), "Minus");
-//    ASSERT_EQ(w.check_operation_input("*"), "Multiply");
-//    ASSERT_EQ(w.check_operation_input("/"), "Divide");
-//    ASSERT_EQ(w.check_operation_input("C"), "Clear");
-//    ASSERT_EQ(w.check_operation_input("="), "Equal");
-//}
-//TEST(Calculator, Operator_Input_GUI_Negative){
-//    MainWindow w;
-//    ASSERT_EQ(w.check_operation_input("?"), "Invalid");
-//    ASSERT_EQ(w.check_operation_input("x"), "Invalid");
-//}
+TEST(Calculator, Operator_Input_GUI_Positive){
+    MainWindow w;
+    ASSERT_EQ(w.check_operation_input("+"), "Plus");
+    ASSERT_EQ(w.check_operation_input("-"), "Minus");
+    ASSERT_EQ(w.check_operation_input("*"), "Multiply");
+    ASSERT_EQ(w.check_operation_input("/"), "Divide");
+    ASSERT_EQ(w.check_operation_input("C"), "Clear");
+    ASSERT_EQ(w.check_operation_input("="), "Equal");
+}
+TEST(Calculator, Operator_Input_GUI_Negative){
+    MainWindow w;
+    ASSERT_EQ(w.check_operation_input("?"), "Invalid");
+    ASSERT_EQ(w.check_operation_input("x"), "Invalid");
+}
+
+//GTEST_OUTPUT ="xml:C:/Users/thorthai/Desktop/";
 
 //TEST(Calculator, Number_Input){
 //    MainWindow w;

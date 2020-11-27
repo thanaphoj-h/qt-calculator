@@ -109,13 +109,13 @@ void MainWindow::check_number_state(double input_number){
             /* If got result and pressed the operation*/
             first_number = answer; // Set first number as result number
             snum_s = true; // set second number state to true
-            show_state();
+            check_state_flag();
         }
         else{
             /* If got result and not pressed the operation */
             snum_s = false;  // Set second number input to true
             first_number = input_number; // set first number from input number (from number_append function)
-            show_state();
+            check_state_flag();
         }
     }
     else{
@@ -124,11 +124,11 @@ void MainWindow::check_number_state(double input_number){
             snum_s = true;
             /* Operation is insert and waiting for second number */
             second_number = input_number; // set second number from input number (from number_append function)
-            show_state();
+            check_state_flag();
         }
         else if(snum_s == false){
             first_number = input_number; // set first number from input number (from number_append function)
-            show_state();
+            check_state_flag();
         }
         else{
             // Impossible to get to this condition
@@ -144,28 +144,28 @@ void MainWindow::check_operator(QString op_input){
             operators = op_input;
             display_sign = op_input;
             operator_s = true;
-            show_state();
+            check_state_flag();
         }
         /* Subtract operation */
         else if (op_input == "-"){
             operators = op_input;
             display_sign = op_input;
             operator_s = true;
-            show_state();
+            check_state_flag();
         }
         /* Multiply operation */
         else if (op_input == "x"){
             operators = "*";
             display_sign = "x";
             operator_s = true;
-            show_state();
+            check_state_flag();
         }
         /* Divide operation */
         else if (op_input == "÷"){
             operators = "/";
             display_sign = "÷";
             operator_s = true;
-            show_state();
+            check_state_flag();
         }
         /* Equal operation */
         else if (op_input == "="){
@@ -213,7 +213,7 @@ void MainWindow::Initial(){
 
     /* Clear Operation*/
     operators = ""; // Clear operation variable;
-    show_state();
+    check_state_flag();
 
 }
 
@@ -305,36 +305,58 @@ void MainWindow::Calculate(){
             result_s = false;
         }
         set_main_display(str_answer);
-        show_state();
+        check_state_flag();
     }
     else{
         set_main_display("Inset OP");
     }
 }
 
-
 /* Testing Section */
-void MainWindow::show_state(){
+/* Get Function */
+double MainWindow::get_first_number(){ return first_number;}
+double MainWindow::get_second_number(){ return second_number;}
+double MainWindow::get_answer(){ return answer;}
+QString MainWindow::get_operators(){ return operators;}
+bool MainWindow::get_initial_s(){ return initial_s;}
+bool MainWindow::get_operator_s(){ return operator_s;}
+bool MainWindow::get_snum_s(){ return snum_s;}
+bool MainWindow::get_result_(){ return result_s;}
 
-    qDebug() << "[INI / OP / SNUM / RES ] -> " << initial_s << operator_s << snum_s << result_s;
+/* Set Function */
+void MainWindow::set_first_number(double input){ first_number = input; }
+void MainWindow::set_second_number(double input){ second_number = input; }
+void MainWindow::set_initial_s(bool input){ initial_s = input; }
+void MainWindow::set_operators(bool input){ operator_s = input;}
+void MainWindow::set_snum_s(bool input){ snum_s = input;}
+void MainWindow::set_result_(bool input){  result_s = input;}
+
+QString MainWindow::check_state_flag(){
+    QString output = "";
+//    qDebug() << "[INI / OP / SNUM / RES ] -> " << initial_s << operator_s << snum_s << result_s;
     if(initial_s == true && operator_s == false && snum_s == false && result_s == false){
-        qDebug() << "Initial State";
+        output = "Initial State";
     }
     else if(initial_s == false && operator_s == false && snum_s == false && result_s == false){
-        qDebug() << "1st Number State";
+        output = "1st Number State";
     }
     else if(initial_s == false && operator_s == true && snum_s == false && result_s == false){
-        qDebug() << "Operators State";
+        output = "Operators State";
     }
     else if(initial_s == false && operator_s == true && snum_s == true && result_s == false){
-        qDebug() << "2nd Number State";
+        output = "2nd Number State";
     }
     else if(initial_s == false && operator_s == false && snum_s == false && result_s == true){
-        qDebug() << "Calculate State";
+        output = "Calculate State";
     }
     else if(initial_s == false && operator_s == true && snum_s == false && result_s == true){
-        qDebug() << "Calculate Continue State";
+        output = "Calculate Continue State";
     }
+    else{
+        output = "INVALID STATE";
+    }
+//    qDebug() << output;
+    return output;
 }
 
 QString MainWindow::test_calculate(double fnum, double snum, QString sign){
@@ -349,179 +371,79 @@ QString MainWindow::test_calculate(double fnum, double snum, QString sign){
     return str_answer;
 }
 
-///* <!--- Function for testing ---!>*/
+QString MainWindow::test_state_flag(QString input){
+    return "";
+}
 
-///* SET value Function*/
-//void MainWindow::set_first_number(double input_num){
-//    first_number = input_num;
-//}
-//void MainWindow::set_second_number(double input_num){
-//    second_number = input_num;
-//}
-//void MainWindow::set_initial_s(bool init){
-//    initial_s = init;
-//}
-//void MainWindow::set_operator_s(bool op){
-//    operator_s = op;
-//}
-//void MainWindow::set_snum_s(bool snum){
-//    snum_s = snum;
-//}
-//void MainWindow::set_result_s(bool res){
-//    result_s = res;
-//}
-//void MainWindow::set_state(bool init, bool op, bool snum, bool res){
-//    initial_s = init;
-//    operator_s = op;
-//    snum_s = snum;
-//    result_s = res;
-//}
+QString MainWindow::check_number_input(QString input_num){
+    QString input = input_num;
+    if(input == "0"){
+        return "0";
+    }
+    else if(input == "1"){
+        return "1";
+    }
+    else if(input == "2"){
+        return "2";
+    }
+    else if(input == "3"){
+        return "3";
+    }
+    else if(input == "4"){
+        return "4";
+    }
+    else if(input == "5"){
+        return "5";
+    }
+    else if(input == "6"){
+        return "6";
+    }
+    else if(input == "7"){
+        return "7";
+    }
+    else if(input == "8"){
+        return "8";
+    }
+    else if(input == "9"){
+        return "9";
+    }
+    else if(input == "."){
+        return ".";
+    }
+    else{
+        return "Invalid";
+    }
+}
 
-///* GET value Function */
-//bool MainWindow::get_initial_s(){
-//    return initial_s;
-//}
-//bool MainWindow::get_operator_s(){
-//    return operator_s;
-//}
-//bool MainWindow::get_snum_s(){
-//    return snum_s;
-//}
-//bool MainWindow::get_result_s(){
-//    return result_s;
-//}
-//double MainWindow::get_result_number(){
-//    return result_number;
-//}
-//QString MainWindow::get_str_input_number(){
-//    return str_input_number;
-//}
-//QString MainWindow::get_operation(){
-//    return operation;
-//}
-
-///* Test Function */
-//QString MainWindow::check_number_input(QString input_num){
-//    QString input = input_num;
-//    if(input == "0"){
-//        return "0";
-//    }
-//    else if(input == "1"){
-//        return "1";
-//    }
-//    else if(input == "2"){
-//        return "2";
-//    }
-//    else if(input == "3"){
-//        return "3";
-//    }
-//    else if(input == "4"){
-//        return "4";
-//    }
-//    else if(input == "5"){
-//        return "5";
-//    }
-//    else if(input == "6"){
-//        return "6";
-//    }
-//    else if(input == "7"){
-//        return "7";
-//    }
-//    else if(input == "8"){
-//        return "8";
-//    }
-//    else if(input == "9"){
-//        return "9";
-//    }
-//    else if(input == "."){
-//        return ".";
-//    }
-//    else{
-//        return "Invalid";
-//    }
-//}
-
-//QString MainWindow::check_operation_input(QString input_operation){
-//    QString input = input_operation;
-//    if(input == "+"){
-//        return "Plus";
-//    }
-//    else if(input == "-"){
-//        return "Minus";
-//    }
-//    else if(input == "*"){
-//        return "Multiply";
-//    }
-//    else if(input == "/"){
-//        return "Divide";
-//    }
-//    else if(input == "C"){
-//        return "Clear";
-//    }
-//    else if(input == "="){
-//        return "Equal";
-//    }
-//    else{
-//        return "Invalid";
-//    }
-//}
-
-//double MainWindow::test_input_number(QString input_number){
-//    QString input = input_number;
-
-//    //    number_append(input);
-//    int len_input = input.size() - 1;
-
-//    for(int i = 0; i <= len_input; i++){
-//        number_append(input.data()[i]);
-//    }
-//    str_input_number = "";
-//    return final_input_number;
-//}
+QString MainWindow::check_operation_input(QString input_operation){
+    QString input = input_operation;
+    if(input == "+"){
+        return "Plus";
+    }
+    else if(input == "-"){
+        return "Minus";
+    }
+    else if(input == "*"){
+        return "Multiply";
+    }
+    else if(input == "/"){
+        return "Divide";
+    }
+    else if(input == "C"){
+        return "Clear";
+    }
+    else if(input == "="){
+        return "Equal";
+    }
+    else{
+        return "Invalid";
+    }
+}
 
 //QString MainWindow::test_input_operation(QString input_operation){
 //    QString input = input_operation;
 //    operation_append(input);
 //    return operation;
-//}
-
-//double MainWindow::test_calculate_result(double fnum, double snum, QString op){
-
-//    /* Set State for testing*/
-//    initial_s = false;
-//    operation = true;
-
-//    /* Set Variable for test */
-//    QString input = "=";
-//    first_number = fnum;
-//    second_number = snum;
-//    operation = op;
-
-//    /* Test Function*/
-//    calculate_result(input);
-
-//    return result_number;
-//}
-
-//QString MainWindow::state_checker(){
-//    if(initial_s == true && operator_s == false && snum_s == false && result_s == false){
-//        return "initial_s";
-//    }
-//    else if(initial_s == false && operator_s == false && snum_s == false && result_s == false){
-//        return "Get_First_Num_State";
-//    }
-//    else if(initial_s == false && operator_s == true && snum_s == true && result_s == false){
-//        return "Get_operator_s";
-//    }
-//    else if(initial_s == false && operator_s == true && snum_s == false && result_s == false){
-//        return "Get_snum_s";
-//    }
-//    else if(initial_s == false && operator_s == false && snum_s == true && result_s == true){
-//        return "Get_result_s";
-//    }
-//    else{
-//        return "Invalid_State";
-//    }
 //}
 
 //QString MainWindow::test_state(QString test_case){
